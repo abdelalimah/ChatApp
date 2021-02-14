@@ -6,29 +6,24 @@ import java.util.Scanner;
 
 public class Client {
 
+    private Socket socket;
+
 
     public Client(String addr,int port) {
-        try(
-                    Socket socket = new Socket(addr,port);
-                    DataInputStream input = new DataInputStream(socket.getInputStream());
-                    DataOutputStream output = new DataOutputStream(socket.getOutputStream());
-                ){
+        try{
+                socket = new Socket(addr,port);
 
-            Scanner scanner = new Scanner(System.in);
+                WriteThread writeThread = new WriteThread(socket);
+                ReadThread readThread = new ReadThread(socket);
 
-            while(true){
+                writeThread.start();
+                readThread.start();
 
-                String msg = scanner.nextLine();
-
-                output.writeUTF(msg);
-                //String receivedMsg = input.readUTF();
-
-                //System.out.println("server echoed message : "+receivedMsg);
-            }
 
         }catch(IOException e){
             System.out.println(e.getMessage());
         }
+
     }
 
     public static void main(String[] args) {

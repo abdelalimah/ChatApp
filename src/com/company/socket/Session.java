@@ -1,8 +1,6 @@
 package com.company.socket;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
@@ -25,13 +23,13 @@ public class Session implements Runnable {
     @Override
     public void run() {
         try(
-                DataInputStream in = new DataInputStream(clientSocket.getInputStream());
-                DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
+                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 ){
             while(true){
-                String msg = in.readUTF();
-                chatRoom.broadcastMessage(msg);
-                //out.writeUTF(msg);
+
+                String msg = in.readLine();
+                chatRoom.broadcastMessage(msg,runner.getName());
+
             }
         }catch(IOException e){
             System.out.println(e.getMessage());

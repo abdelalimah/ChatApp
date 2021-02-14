@@ -1,9 +1,14 @@
 package com.company.socket;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Vector;
 
 public class Server {
+
 
     public Server(int port) {
 
@@ -13,17 +18,19 @@ public class Server {
 
             System.out.println("Listening for incoming requests ...");
 
-            ChatRoom chatRoom = new ChatRoom();
+            HashMap<String,Socket> clients = new HashMap();
 
-            int i = 0;
-            int clientCount = 0;
-            while(clientCount < 2){
-                Socket socket = serverSocket.accept();
-                clientCount++;
-                String clientName = "Client no"+i++;
+            int i =0;
+            while(clients.size() < 2){
+                clients.put("user"+i++,serverSocket.accept());
                 System.out.println("Client accepted");
-                new Session(socket,clientName,chatRoom);
             }
+
+            ChatRoom chatRoom = new ChatRoom(clients);
+
+            clients.forEach((clientName,client) -> {
+                new Session(client,clientName,chatRoom);
+            });
 
         }catch(IOException e){
             System.out.println(e.getMessage());
